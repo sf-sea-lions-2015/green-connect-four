@@ -9,8 +9,9 @@ table, tr, td {
     border-collapse: collapse;
 }
 td {
-  height:50px;
-  width: 50px;
+  background-color: green;
+  height:100px;
+  width: 100px;
 }
 
 td.red {
