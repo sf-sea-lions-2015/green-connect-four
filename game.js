@@ -28,47 +28,91 @@ var reset_board = function() {
   switch_turns();
 };
 
-var horizontal_left = function(col_no, row_no) {
-  var count = 1;
-  for(var i = (col_no - 1); i > 0; i--) {
-    var left_color = $('tr.row' + row_no + ' td.col' + i + " svg circle").attr('fill');
-    if (left_color === player.color) {
+var horizontal_win = function(row_no) {
+  var count = 0;
+  for(var i = 1; i <=7; i++) {
+    var color = $('tr.row' + row_no + ' td.col' + i + " svg circle").attr('fill');
+    if (color === player.color) {
       count ++;
+      if (count === 4) {
+        return true;
+      };
     } else {
       count = 0;
-    };
+    }
   };
-  return count >= 4;
+  return false;
 };
 
-var horizontal_right = function(col_no, row_no) {
-  var count = 1;
-  for(var i = (col_no + 1); i <= 7; i++) {
-    var right_color = $('tr.row' + row_no + ' td.col' + i + " svg circle").attr('fill');
-    if (right_color === player.color) {
+var vertical_win = function(col_no) {
+  var count = 0;
+  for(var i = 1; i <=6; i++) {
+    var color = $('tr.row' + i + ' td.col' + col_no + " svg circle").attr('fill');
+    if (color === player.color) {
       count ++;
+      if (count === 4) {
+        return true;
+      };
     } else {
       count = 0;
-    };
+    }
   };
-  return count >= 4;
+  return false;
 };
 
+var diagonal_win_ltr = function(row_no, col_no) {
+  if (row_no < col_no) {
+    start_col = col_no - (row_no - 1);
+    start_row = 1;
+  } else if (row_no > col_no) {
+    start_col = 1;
+    start_row = row_no - (col_no - 1);
+  } else if (row_no === col_no) {
+    start_row = 1;
+    start_col = 1;
+  };
+  var count = 0;
+  for(var i = 0; i <= (7 - start_row); i++) {
+    var color = $('tr.row' + (start_row+ i) + ' td.col' + (start_col + i) + " svg circle").attr('fill');
+    if (color === player.color) {
+      count ++;
+      if (count === 4) {
+        return true;
+      };
+    } else {
+      count = 0;
+    }
+  };
+  return false;
+};
+
+var diagonal_win_rtl = function(row_no, col_no) {
+  if (row_no < col_no) {
+    start_col = col_no + row_no - 1;
+    start_row = 1;
+  } else if (row_no >= col_no) {
+    start_col = 7;
+    start_row = row_no - (7 - col_no);
+  };
+  var count = 0;
+  for(var i = 0; i <= (7 - start_row); i++) {
+    var color = $('tr.row' + (start_row + i) + ' td.col' + (start_col - i) + " svg circle").attr('fill');
+    if (color === player.color) {
+      count ++;
+      if (count === 4) {
+        return true;
+      };
+    } else {
+      count = 0;
+    }
+  };
+  return false;
+};
 var player1 = new Player('player 1', 'red');
 var player2 = new Player('player 2', 'black');
 player = player1;
-// Player.prototype.dropDisc = function(){
-
-// }
 
 $('button').click(function(){
-  // // console.log("hey");
-  // if ($('td:nth-child('+ $(this).text()+') circle')){
-  //   // console.log("hey")
-  //   // console.log($('td.col1'))
-  //   var index = parseInt($(this).text()) + 1
-  //   // console.log($('td.col' + index))
-  //   $('td.col' + index).css({backgroundColor: "yellow"})
   var col_no = parseInt($(this).text());
   var row_no = row_count[col_no -1];
   if (row_no > 6) {
@@ -76,7 +120,7 @@ $('button').click(function(){
   } else {
     $('tr.row' + row_no + " td.col" + col_no + " svg circle").attr('fill', player.color);
     row_count[col_no-1]++;
-    if (horizontal_right(col_no, row_no) || horizontal_left(col_no, row_no)) {
+    if (horizontal_win(row_no) || vertical_win(col_no) || diagonal_win_ltr(row_no, col_no) || diagonal_win_rtl(row_no, col_no)) {
       alert(player.name + " wins!");
       var choice = confirm("New game?")
       if (choice === true) {
