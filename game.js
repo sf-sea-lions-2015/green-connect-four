@@ -8,13 +8,16 @@
 // when background color is changed, give it a class called "filled?"
 // if not filled, place disc in, else place the disc in the row above.
 row_count = [1,1,1,1,1,1,1];
+// row_no = 1
+// col_no =1
 
-var Player = function(name){
+var Player = function(name, color){
   this.name = name;
+  this.color = color
 };
 
-var player1 = new Player('player1');
-var player2 = new Player('player2');
+var player1 = new Player('player1', 'red');
+var player2 = new Player('player2', 'black');
 
 // Player.prototype.dropDisc = function(){
 
@@ -29,12 +32,12 @@ $('button').click(function(){
   //   // console.log($('td.col' + index))
   //   $('td.col' + index).css({backgroundColor: "yellow"})
   col_no = parseInt($(this).text());
-  row_no = row_count[col_no];
-  if (row_no === 6) {
+  row_no = row_count[col_no -1];
+  if (row_no > 6) {
     alert("filled already")
   } else {
-    $('tr.row' + row_no + " td.col" + col_no + " svg circle").css({backgroundColor: "red"});
-    row_count[col_no]++;
+    $('tr.row' + row_no + " td.col" + col_no + " svg circle").attr('fill', player2.color);
+    row_count[col_no-1]++;
   }
 
 });
