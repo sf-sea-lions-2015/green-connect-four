@@ -60,6 +60,54 @@ var vertical_win = function(col_no) {
   return false;
 };
 
+var diagonal_win_ltr = function(row_no, col_no) {
+  if (row_no < col_no) {
+    start_col = col_no - (row_no - 1);
+    start_row = 1;
+  } else if (row_no > col_no) {
+    start_col = 1;
+    start_row = row_no - (col_no - 1);
+  } else if (row_no === col_no) {
+    start_row = 1;
+    start_col = 1;
+  };
+  var count = 0;
+  for(var i = 0; i <= (7 - start_row); i++) {
+    var color = $('tr.row' + (start_row+ i) + ' td.col' + (start_col + i) + " svg circle").attr('fill');
+    if (color === player.color) {
+      count ++;
+      if (count === 4) {
+        return true;
+      };
+    } else {
+      count = 0;
+    }
+  };
+  return false;
+};
+
+var diagonal_win_rtl = function(row_no, col_no) {
+  if (row_no < col_no) {
+    start_col = col_no + row_no - 1;
+    start_row = 1;
+  } else if (row_no >= col_no) {
+    start_col = 7;
+    start_row = row_no - (7 - col_no);
+  };
+  var count = 0;
+  for(var i = 0; i <= (7 - start_row); i++) {
+    var color = $('tr.row' + (start_row + i) + ' td.col' + (start_col - i) + " svg circle").attr('fill');
+    if (color === player.color) {
+      count ++;
+      if (count === 4) {
+        return true;
+      };
+    } else {
+      count = 0;
+    }
+  };
+  return false;
+};
 var player1 = new Player('player 1', 'red');
 var player2 = new Player('player 2', 'black');
 player = player1;
@@ -72,7 +120,7 @@ $('button').click(function(){
   } else {
     $('tr.row' + row_no + " td.col" + col_no + " svg circle").attr('fill', player.color);
     row_count[col_no-1]++;
-    if (horizontal_win(row_no) || vertical_win(col_no)) {
+    if (horizontal_win(row_no) || vertical_win(col_no) || diagonal_win_ltr(row_no, col_no) || diagonal_win_rtl(row_no, col_no)) {
       alert(player.name + " wins!");
       var choice = confirm("New game?")
       if (choice === true) {
